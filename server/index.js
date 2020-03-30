@@ -4,8 +4,8 @@ const express = require('express'),
       massive = require('massive'),
       authCtrl = require('./controllers/authCtrl'),
       ctrl = require('./controllers/mainCtrl'),
-      //add env port here
-      path = require('path');
+      {SERVER_PORT, CONNECTION_STRING, SESSION_SECRET} = process.env,
+      port = SERVER_PORT;
 
 const app = express();
 
@@ -14,8 +14,20 @@ app.use(express.json());
 app.use(session({
     resave: false,
     saveUninitialized: true,
-    //add secret here
+    secret: SESSION_SECRET,
     cookie: {maxAge: 1000 * 60 * 60 * 24}
 }))
 
-app.listen(3333, () => console.log(`Server is listening on 3333`))
+massive({
+    connectionString: CONNECTION_STRING,
+    ssl: {rejectUnauthorized: false}
+})
+.then(db => {
+    app.set('db', db);
+    console.log('DB connected');
+    app.listen(port, () => console.log(`Server is listening on port: ${port}`))
+})
+
+//auth endpoints
+app.post(`/api/register`, authCtrl.register);
+app.post('/api/login', authCtrl.login);
