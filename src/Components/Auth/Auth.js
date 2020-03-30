@@ -37,6 +37,7 @@ class Auth extends Component {
         axios.post('/api/register', {email, password})
         .then(res => {
             //Place this user info somewhere state or redux
+            
             //react-router-dom moves the user to the dash
             this.props.history.push('/dash');
         })
