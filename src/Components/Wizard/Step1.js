@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './Wiz.css';
+import {connect} from 'react-redux';
+import updateLocation from '../../redux/reducer';
 
 class Step1 extends Component {
   constructor(props) {
@@ -63,10 +65,20 @@ class Step1 extends Component {
           </div>
         </div>
         {/* button needs to do something */}
-        <button className='wiz_button wiz_step_button'>Next Step</button>
+        <button 
+          className='wiz_button wiz_step_button' 
+          onClick={()=> {
+            this.props.updateLocation(this.state);
+            this.props.history.push('/wizard/step2');
+        }}>Next Step</button>
       </div>
     );
   }
 }
 
-export default Step1;
+const mapStateToProps = reduxState => {
+  const {name, address, city, state, zip} = reduxState;
+  return {name, address, city, state, zip}
+}
+
+export default connect(mapStateToProps, {updateLocation})(Step1);

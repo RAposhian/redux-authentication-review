@@ -32,3 +32,6 @@ massive({
 app.post(`/api/register`, authCtrl.register);
 app.post('/api/login', authCtrl.login);
 app.get('/api/logout', authCtrl);
+
+//house endpoints
+app.post('/api/listing', ctrl.createListing);

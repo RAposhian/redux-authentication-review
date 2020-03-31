@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import {connect} from 'react-redux'
+import {clear, updateMoney} from '../../redux/reducer';
 import './Wiz.css';
 
 class Step3 extends Component {
@@ -15,7 +17,21 @@ class Step3 extends Component {
   }
 
   componentDidMount() {
-    //Use redux to set state items
+    this.setState({
+      mortgage: this.props.mortgage,
+      rent: this.props.rent
+    })
+  }
+
+  complete = () => {
+    const {name, address, city, state, img} = this.props
+    const {mortgage, rent} = this.state
+    axios.post('./api/listing', {name, address, city, state, zip, img, mortgage, rent})
+    .then(() => {
+      this.props.clear()
+      this.props.history.push('/dash')
+    })
+    .catch(err => console.log(err))
   }
 
   handleChange(prop, value) {
@@ -52,11 +68,16 @@ class Step3 extends Component {
           </div>
         </div>
         {/* buttons need to do something */}
-        <button className='wiz_button wiz_prev_button'>Previous Step</button>
-        <button className='wiz_button wiz_complete_button'>Complete</button>
+        <button className='wiz_button wiz_prev_button' onClick={() => {
+          this.props.updateMoney({mortgage: this.state.mortgage, rent: this.state.rent})
+          this.props.history.push('/wizard/step2')
+        }}>Previous Step</button>
+        <button className='wiz_button wiz_complete_button' onClick={this.complete}>Complete</button>
       </div>
     );
   }
 }
 
-export default Step3;
+const mapStateToProps = reduxState => reduxState;
+
+export default connect(mapStateToProps)(Step3);

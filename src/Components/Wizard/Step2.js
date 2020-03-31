@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './Wiz.css';
+import {connect} from 'react-redux';
+import updateImage from '../../redux/reducer'
 
 class Step2 extends Component {
   constructor(props) {
@@ -11,7 +13,7 @@ class Step2 extends Component {
   }
 
   componentDidMount() {
-    //use redux to set img state
+    this.setState({ img: this.props.img})
   }
 
   handleChange(value) {
@@ -19,7 +21,7 @@ class Step2 extends Component {
   }
 
   render() {
-
+    
     return (
       <div>
         <div className='wiz_input_container'>
@@ -29,12 +31,22 @@ class Step2 extends Component {
           </div>
         </div>
         {/* button needs to do something */}
-        <button className='wiz_button wiz_prev_button'>Previous Step</button>
+        <button className='wiz_button wiz_prev_button' onClick={() => { 
+          this.props.updateImage(this.state.img) 
+          this.props.history.push('/wizard/step1')}}>Previous Step</button>
         {/* button needs to do something */}
-        <button className='wiz_button wiz_step_button'>Next Step</button>
+        <button className='wiz_button wiz_step_button' onClick={() => {
+          this.props.updateImage(this.state.img)
+          this.props.history.push('/wizard/step3')
+        }}>Next Step</button>
       </div>
     );
   }
 }
 
-export default Step2;
+const mapStateToProps = reduxState => {
+  const {img} = reduxState;
+  return {img}
+};
+
+export default connect(mapStateToProps, {updateImage})(Step2);
